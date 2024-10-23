@@ -15,6 +15,7 @@
 int print_dir(DIR *dir_temp, int show_hidden);
 void printBinary(unsigned int num, int bits_to_print);
 void print_permissions(struct stat filestat_temp);
+void bytes_converted(unsigned int bytes);
 
 int main(int argc, char **argv){
     if (argc < 2){
@@ -68,8 +69,8 @@ int print_dir(DIR *dir_temp, int show_hidden){
     long prev_pos_ent;  //En esta variable se almacenará la ubicación de la entrada anterior
     prev_pos_ent = telldir(dir_temp);   //Se almacena la dirección de la entrada actual
 
-    printf("PERMISOS   N OWNER      GROUP     SIZE  DATE             NAME\n");
-    printf("==========|=|==========|=========|=====|================|================================\n");
+    printf("PERMISOS   N     OWNER      GROUP     SIZE    DATE             NAME\n");
+    printf("==========|====|=========|=========|=======|================|================================\n");
 
     while(readdir(dir_temp)!= NULL){  //Se lee cada una de las entradas
         seekdir(dir_temp, prev_pos_ent);    //Reposicionamiento del apuntador basado en la posición anterior
@@ -80,28 +81,35 @@ int print_dir(DIR *dir_temp, int show_hidden){
             prev_pos_ent = telldir(dir_temp);   //Se obtiene la dirección actual
             continue;
         }
+        // |PERMISOS|
         print_permissions(filestat_temp);
-        printf(" %ld ", filestat_temp.st_nlink); // Número de enlaces
+        // |CARPETAS ENLACES|
+        printf(" %ld\t", filestat_temp.st_nlink); // Número de enlaces
 
-
+        // |PROPIETARIO|
         struct passwd *pw = getpwuid(filestat_temp.st_uid);
         if (pw) {
             printf("%-9.9s", pw->pw_name); // Propietario con longitud ajustada a 8 caracteres
         } else {
-            printf("unknown");
+            printf("unknown  ");
         }
 
+        // |GRUPO|
         struct passwd *gr = getpwuid(filestat_temp.st_gid); // Grupo
         if (gr) {
-            printf("\t%-9.9s", gr->pw_name); // Grupo con longitud ajustada a 8 caracteres
+            printf(" %-9.9s", gr->pw_name); // Grupo con longitud ajustada a 8 caracteres
         } else {
-            printf("\tunknown  ");
+            printf(" unknown  ");
         }
 
-        printf(" %ld", filestat_temp.st_size); // Tamaño del archivo
+        // |TAMAÑO|
+        bytes_converted(filestat_temp.st_size); // Tamaño del archivo
+        // printf(" %ld", filestat_temp.st_size); // Tamaño del archivo
         
-        printf("\t%-16.16s", ctime(&filestat_temp.st_mtime));
+        // |FECHA|
+        printf(" %-16.16s", ctime(&filestat_temp.st_mtime));
         
+        // |NOMBRE|
         printf(" %s\n", dir_ent_temp.d_name); // Impresión del nombre del archivo
         prev_pos_ent = telldir(dir_temp);   //Se obtiene la dirección actual
     }
@@ -130,4 +138,22 @@ void print_permissions(struct stat filestat_temp){
     printf((filestat_temp.st_mode & S_IROTH) ? "r" : "-");
     printf((filestat_temp.st_mode & S_IWOTH) ? "w" : "-");
     printf((filestat_temp.st_mode & S_IXOTH) ? "x" : "-");
+}
+
+void bytes_converted(unsigned int bytes) {
+    const char *units[] = {"B ", "KB", "MB", "GB", "TB"};
+    int unit_index = 0;
+    double size = bytes;
+
+    while (size >= 1024 && unit_index < sizeof(units) / sizeof(units[0]) - 1) {
+        size /= 1024;
+        unit_index++;
+    }
+    if (unit_index > 5)
+    {
+        printf("Exceeds");
+    }
+    
+
+    printf("%5.0f %s", size, units[unit_index]);
 }
