@@ -125,3 +125,17 @@ _Consola_
 ```bash
 $ 123456789
 ```
+
+## Convertir Medidas a Kilos, Megas, Gigas y Teras
+Sabiendo que pasar de bytes a megabytes se usa *1024 bytes* y asi con cualquier medida, buscamos el maximo valor y maxima medida con:
+```c
+while (size >= 1024 && unit_index < sizeof(units) / sizeof(units[0]) - 1) {
+        size /= 1024;
+        unit_index++;
+    }
+```
+En el cual cada vez que el valor de numeros sobrepase su unidad, se ira cambiando el valor de `unit_index` el cual es una lista con los nombres de los valores que pueden existir
+```c
+const char *units[] = {"B ", "KB", "MB", "GB", "TB"};
+```
+En caso de que se sobrepase el valor en terabytes de `1024TB` se imprimira `Exceeds` como forma de proteccion al acceso de lista
