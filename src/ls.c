@@ -70,7 +70,7 @@ int print_dir(DIR *dir_temp, int show_hidden){
     prev_pos_ent = telldir(dir_temp);   //Se almacena la dirección de la entrada actual
 
     printf("PERMISOS   N     OWNER      GROUP     SIZE    DATE             NAME\n");
-    printf("==========|====|=========|=========|=======|================|================================\n");
+    printf("==========|====|=========|=========|=======|===================|================================\n");
 
     while(readdir(dir_temp)!= NULL){  //Se lee cada una de las entradas
         seekdir(dir_temp, prev_pos_ent);    //Reposicionamiento del apuntador basado en la posición anterior
@@ -107,10 +107,10 @@ int print_dir(DIR *dir_temp, int show_hidden){
         // printf(" %ld", filestat_temp.st_size); // Tamaño del archivo
         
         // |FECHA|
-        printf(" %-16.16s", ctime(&filestat_temp.st_mtime));
+        printf(" %-19.19s", ctime(&filestat_temp.st_mtime));
         
         // |NOMBRE|
-        printf(" %s\n", dir_ent_temp.d_name); // Impresión del nombre del archivo
+        printf(" %-32.32s\n", dir_ent_temp.d_name); // Impresión del nombre del archivo
         prev_pos_ent = telldir(dir_temp);   //Se obtiene la dirección actual
     }
 
@@ -149,11 +149,13 @@ void bytes_converted(unsigned int bytes) {
         size /= 1024;
         unit_index++;
     }
-    if (unit_index > 5)
+    if (unit_index > 4)
     {
         printf("Exceeds");
+    }else{
+        printf("%5.0f %s", size, units[unit_index]);
     }
     
 
-    printf("%5.0f %s", size, units[unit_index]);
+    
 }
