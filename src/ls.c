@@ -64,7 +64,7 @@ int print_dir(DIR *dir_temp, int show_hidden){
      */
 
 
-    struct dirent dir_ent_temp; //struct para almacenar temporalmente la entrada del directorio
+    struct dirent *dir_ent_temp; //struct para almacenar temporalmente la entrada del directorio
     struct stat filestat_temp;  //struct para almacenar temporalmente la información del archivo
     long prev_pos_ent;  //En esta variable se almacenará la ubicación de la entrada anterior
     prev_pos_ent = telldir(dir_temp);   //Se almacena la dirección de la entrada actual
@@ -72,12 +72,11 @@ int print_dir(DIR *dir_temp, int show_hidden){
     printf("PERMISOS   N    DUENO     GRUPO     TAMANO  FECHADEMODIFICACION NOMBRE\n");
     printf("==========|====|=========|=========|=======|===================|================================\n");
 
-    while(readdir(dir_temp)!= NULL){  //Se lee cada una de las entradas
+    while((readdir(dir_temp)) != NULL){  //Se lee cada una de las entradas
         seekdir(dir_temp, prev_pos_ent);    //Reposicionamiento del apuntador basado en la posición anterior
-        
-        stat(dir_ent_temp.d_name, &filestat_temp); //Se obtiene la información del archivo
-        dir_ent_temp = *readdir(dir_temp);  //Lectura de entrada
-        if (show_hidden == 0 && dir_ent_temp.d_name[0] == '.'){
+        dir_ent_temp = readdir(dir_temp); //Se obtiene la entrada actual
+        stat(dir_ent_temp->d_name, &filestat_temp); //Se obtiene la información del archivo
+        if (show_hidden == 0 && dir_ent_temp->d_name[0] == '.'){
             prev_pos_ent = telldir(dir_temp);   //Se obtiene la dirección actual
             continue;
         }
@@ -110,7 +109,7 @@ int print_dir(DIR *dir_temp, int show_hidden){
         printf(" %-19.19s", ctime(&filestat_temp.st_mtime));
         
         // |NOMBRE|
-        printf(" %-32.32s\n", dir_ent_temp.d_name); // Impresión del nombre del archivo
+        printf(" %-32.32s\n", dir_ent_temp->d_name); // Impresión del nombre del archivo
         prev_pos_ent = telldir(dir_temp);   //Se obtiene la dirección actual
     }
 
