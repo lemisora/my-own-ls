@@ -12,7 +12,7 @@
 #include <string.h> //Header para funciones de manipulación de cadenas
 #include <time.h> // Header para funciones de tiempo
 
-int print_dir(DIR *dir_temp, int show_hidden);
+int print_dir(DIR *dir_temp, int show_hidden, const char* location);
 void printBinary(unsigned int num, int bits_to_print);
 void print_permissions(struct stat filestat_temp);
 void bytes_converted(unsigned int bytes);
@@ -31,7 +31,7 @@ int main(int argc, char **argv){
             show_hidden = 1;
         }
     }
-    
+
 
     DIR* dir_temp;  //Apuntador a directorio
     //struct stat file_temp;  //
@@ -45,41 +45,101 @@ int main(int argc, char **argv){
         return EXIT_FAILURE;
     }
 
-    print_dir(dir_temp, show_hidden);
+    print_dir(dir_temp, show_hidden, location);
 
-    
+
     return EXIT_SUCCESS;
 }
 
 
-int print_dir(DIR *dir_temp, int show_hidden){
+// int print_dir(DIR *dir_temp, int show_hidden){
 
-    /* Print Example First Template 
-    |PERMISOS  |N|OWNER    ||GROUP|  |SIZE| |DATE|       |NAME|
-    -rw-rw-rw-  1 codespace root      35149 Oct 23 05:23 LICENSE
-    -rw-rw-rw-  1 codespace root          0 Oct 23 05:23 README.md
-    drwxrwxrwx+ 6 codespace codespace  4096 Oct 23 05:32 builddir
-    -rw-rw-rw-  1 codespace root        224 Oct 23 05:23 meson.build
-    drwxrwxrwx+ 2 codespace root       4096 Oct 23 05:23 src
-     */
+//     /* Print Example First Template
+//     |PERMISOS  |N|OWNER    ||GROUP|  |SIZE| |DATE|       |NAME|
+//     -rw-rw-rw-  1 codespace root      35149 Oct 23 05:23 LICENSE
+//     -rw-rw-rw-  1 codespace root          0 Oct 23 05:23 README.md
+//     drwxrwxrwx+ 6 codespace codespace  4096 Oct 23 05:32 builddir
+//     -rw-rw-rw-  1 codespace root        224 Oct 23 05:23 meson.build
+//     drwxrwxrwx+ 2 codespace root       4096 Oct 23 05:23 src
+//      */
 
+
+//     struct dirent *dir_ent_temp; //struct para almacenar temporalmente la entrada del directorio
+//     struct stat filestat_temp;  //struct para almacenar temporalmente la información del archivo
+//     long prev_pos_ent;  //En esta variable se almacenará la ubicación de la entrada anterior
+//     prev_pos_ent = telldir(dir_temp);   //Se almacena la dirección de la entrada actual
+
+//     printf("PERMISOS   N    DUENO     GRUPO     TAMANO  FECHADEMODIFICACION NOMBRE\n");
+//     printf("==========|====|=========|=========|=======|===================|================================\n");
+
+//     while((readdir(dir_temp)) != NULL){  //Se lee cada una de las entradas
+//         seekdir(dir_temp, prev_pos_ent);    //Reposicionamiento del apuntador basado en la posición anterior
+//         dir_ent_temp = readdir(dir_temp); //Se obtiene la entrada actual
+//         stat(dir_ent_temp->d_name, &filestat_temp); //Se obtiene la información del archivo
+//         if (show_hidden == 0 && dir_ent_temp->d_name[0] == '.'){
+//             prev_pos_ent = telldir(dir_temp);   //Se obtiene la dirección actual
+//             continue;
+//         }
+//         // |PERMISOS|
+//         print_permissions(filestat_temp);
+//         // |CARPETAS ENLACES|
+//         printf(" %ld\t", filestat_temp.st_nlink); // Número de enlaces
+
+//         // |PROPIETARIO|
+//         struct passwd *pw = getpwuid(filestat_temp.st_uid);
+//         if (pw) {
+//             printf("%-9.9s", pw->pw_name); // Propietario con longitud ajustada a 8 caracteres
+//         } else {
+//             printf("unknown  ");
+//         }
+
+//         // |GRUPO|
+//         struct passwd *gr = getpwuid(filestat_temp.st_gid); // Grupo
+//         if (gr) {
+//             printf(" %-9.9s", gr->pw_name); // Grupo con longitud ajustada a 8 caracteres
+//         } else {
+//             printf(" unknown  ");
+//         }
+
+//         // |TAMAÑO|
+//         bytes_converted(filestat_temp.st_size); // Tamaño del archivo
+//         // printf(" %ld", filestat_temp.st_size); // Tamaño del archivo
+
+//         // |FECHA|
+//         printf(" %-19.19s", ctime(&filestat_temp.st_mtime));
+
+//         // |NOMBRE|
+//         printf(" %-32.32s\n", dir_ent_temp->d_name); // Impresión del nombre del archivo
+//         prev_pos_ent = telldir(dir_temp);   //Se obtiene la dirección actual
+//     }
+
+//     closedir(dir_temp); // Cerrar el apuntador a directorio
+
+//     return 0;
+// }
+
+int print_dir(DIR *dir_temp, int show_hidden, const char *location){
 
     struct dirent *dir_ent_temp; //struct para almacenar temporalmente la entrada del directorio
     struct stat filestat_temp;  //struct para almacenar temporalmente la información del archivo
-    long prev_pos_ent;  //En esta variable se almacenará la ubicación de la entrada anterior
-    prev_pos_ent = telldir(dir_temp);   //Se almacena la dirección de la entrada actual
+    char filepath[PATH_MAX];  //Para almacenar la ruta completa del archivo
 
     printf("PERMISOS   N    DUENO     GRUPO     TAMANO  FECHADEMODIFICACION NOMBRE\n");
     printf("==========|====|=========|=========|=======|===================|================================\n");
 
-    while((readdir(dir_temp)) != NULL){  //Se lee cada una de las entradas
-        seekdir(dir_temp, prev_pos_ent);    //Reposicionamiento del apuntador basado en la posición anterior
-        dir_ent_temp = readdir(dir_temp); //Se obtiene la entrada actual
-        stat(dir_ent_temp->d_name, &filestat_temp); //Se obtiene la información del archivo
+    while((dir_ent_temp = readdir(dir_temp)) != NULL){  //Se obtiene la entrada actual
+
         if (show_hidden == 0 && dir_ent_temp->d_name[0] == '.'){
-            prev_pos_ent = telldir(dir_temp);   //Se obtiene la dirección actual
             continue;
         }
+
+        // Concatenamos la ruta del directorio (location) con el nombre del archivo
+        snprintf(filepath, sizeof(filepath), "%s/%s", location, dir_ent_temp->d_name);
+        if (stat(filepath, &filestat_temp) == -1) {
+            perror("Error al obtener información del archivo");
+            continue;
+        }
+
         // |PERMISOS|
         print_permissions(filestat_temp);
         // |CARPETAS ENLACES|
@@ -103,20 +163,19 @@ int print_dir(DIR *dir_temp, int show_hidden){
 
         // |TAMAÑO|
         bytes_converted(filestat_temp.st_size); // Tamaño del archivo
-        // printf(" %ld", filestat_temp.st_size); // Tamaño del archivo
-        
+
         // |FECHA|
         printf(" %-19.19s", ctime(&filestat_temp.st_mtime));
-        
+
         // |NOMBRE|
         printf(" %-32.32s\n", dir_ent_temp->d_name); // Impresión del nombre del archivo
-        prev_pos_ent = telldir(dir_temp);   //Se obtiene la dirección actual
     }
 
     closedir(dir_temp); // Cerrar el apuntador a directorio
 
     return 0;
 }
+
 
 void printBinary(unsigned int num, int bits_to_print) {
     for (int i = bits_to_print - 1; i >= 0; i--) {
@@ -154,7 +213,7 @@ void bytes_converted(unsigned int bytes) {
     }else{
         printf("%5.0f %s", size, units[unit_index]);
     }
-    
 
-    
+
+
 }
