@@ -69,7 +69,7 @@ int print_dir(DIR *dir_temp, int show_hidden){
     long prev_pos_ent;  //En esta variable se almacenará la ubicación de la entrada anterior
     prev_pos_ent = telldir(dir_temp);   //Se almacena la dirección de la entrada actual
 
-    printf("PERMISOS   N     OWNER      GROUP     SIZE    DATE             NAME\n");
+    printf("PERMISOS   N    DUENO     GRUPO     TAMANO  FECHADEMODIFICACION NOMBRE\n");
     printf("==========|====|=========|=========|=======|===================|================================\n");
 
     while(readdir(dir_temp)!= NULL){  //Se lee cada una de las entradas
