@@ -167,8 +167,14 @@ int print_dir(DIR *dir_temp, int show_hidden, const char *location){
         // |FECHA|
         printf(" %-19.19s", ctime(&filestat_temp.st_mtime));
 
+        //inodes
+        printf(" %-11.11lu ",dir_ent_temp->d_ino);
+        printf(" %-11.11lu ",dir_ent_temp->d_off);
+
         // |NOMBRE|
         printf(" %-32.32s\n", dir_ent_temp->d_name); // Impresión del nombre del archivo
+
+
     }
 
     closedir(dir_temp); // Cerrar el apuntador a directorio
