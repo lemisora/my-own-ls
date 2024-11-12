@@ -88,7 +88,7 @@ stat(dir_ent.d_name, &filestat);
 // Obtener un bool si existe cierto permiso
 int read = filestat.st_mode & S_IRUSR;
 ```
-La tabla de permiso se cuentra dentro del header `stat.h` igual hago liga al 
+La tabla de permiso se cuentra dentro del header `stat.h` igual hago liga al
 [Codigo del stat.h](https://sites.uclouvain.be/SystInfo/usr/include/bits/stat.h.html)
 
 ## Obtener nombres de propietarios
@@ -139,3 +139,33 @@ En el cual cada vez que el valor de numeros sobrepase su unidad, se ira cambiand
 const char *units[] = {"B ", "KB", "MB", "GB", "TB"};
 ```
 En caso de que se sobrepase el valor en terabytes de `1024TB` se imprimira `Exceeds` como forma de proteccion al acceso de lista
+
+## A realizar
+- Un programa con utilidades similares a touch
+- Escribir a archivo
+- Borrar archivo
+- Mostrar archivo
+- Abre un archivo apuntando a un punto específico e imprimir desde ahí
+- Crear directorio / mostrar directorio
+- Crear un pequeño shell que solo interprete los comandos que vamos a crear
+
+- nodo-r - nodo remoto
+
+### Utilidades del nuevo proyecto
+- Mini prompt (debe permitir)
+  - Crear archivo (similar a ```touch```)
+  - Escribir archivo (similar a ```cat >>``` o ```echo```)
+    - Si ya está creado debe escribirse toda la cadena hasta llegar hasta la palabra "FIN"
+  - Borrar archivo
+  - Mostrar archivo (similar a ```cat```)
+    - Especificando la posición desde la que imprimir usando un comando tipo:
+    - ```bash
+        mostrarArchivo [ruta]/nombreArchivo posición
+      ```
+    - Si no se especifica posición simplemente se imprime el Archivo
+  - renombrarArchivo (similar a ```mv```)
+  - crearDirectorio (similar a ```mkdir```)
+  - mostrarDirectorio (similar a ```ls```)
+  - borrarDirectorio (similar a ```rmdir```)
+  - renombrarDirectorio (similar a ```mv```)
+  - salir
