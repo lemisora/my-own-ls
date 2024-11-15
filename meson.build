@@ -5,5 +5,6 @@ executable(
   # 'src/ls.c', # Código fuente principal
   'mosh',
   'src/my_shell.c',
+  'src/ls.c',
   install: true, # Instalar ejecutable en una carpeta determinada
 )
