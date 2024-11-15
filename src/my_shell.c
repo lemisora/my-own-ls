@@ -6,23 +6,26 @@
 #include <string.h>
 #include <pwd.h>
 
-#define BUF_LENGTH 256
-#define KW_NUM 10
+#define KW_NUM 11
 
 const char *user;
 char hostname[BUF_LENGTH];
 
 char *keywords[KW_NUM] = {"exit", "help", "touch", "echo", "rm",
-                          "cat",  "mv",   "mkdir", "ls",   "rmdir"};
+                          "cat",  "mv",   "mkdir", "ls",   "rmdir", "clear"};
 
-void printPrompt(const char* usr, char* hostname) { printf("%s@%s ~> ", user, hostname); }
+void printPrompt(const char* usr, char* hostname) { printf("%s@%s > ", user, hostname); }
 
-void printInitMsg() { printf("Bienvenido a My Own Shell (Development)!\n"); }
+void printInitMsg() { printf("Bienvenido a My Own Shell (Development)!\nPara más información acerca de los comandos disponibles ingrese el comando: 'help'\n"); }
 
 void printExitMsg() { printf("Saliendo de mosh-dev\n"); }
 
 void printArgs(int argc, char **argv) {
   printf("Argumentos ingresados: %i -> \"%s\"\n", argc, argv[0]);
+}
+
+void clear_screen(){
+    printf("\033[2J\033[H");
 }
 
 int shellKeyword(char *command) {
@@ -86,15 +89,15 @@ int main() {
       // case 3:
       //   my_echo(argc, args);
       //   break;
-      // case 4:
-      //   my_rm(argc, args);
-      //   break;
-      // case 5:
-      //   my_cat(argc, args);
-      //   break;
-      // case 6:
-      //   my_mv(argc, args);
-      //   break;
+      case 4:
+        my_rm(argc, args);
+        break;
+      case 5:
+        my_cat(argc, args);
+        break;
+      case 6:
+        my_mv(argc, args);  //Falta implementar la versión que renombra carpetas
+        break;
       case 7:
         my_mkdir(argc, args);
         break;
@@ -103,6 +106,9 @@ int main() {
         break;
       case 9:
         my_rmdir(argc, args);
+        break;
+      case 10:
+        clear_screen();
         break;
       default:
         printf("Error: Comando '%s' no reconocido\n", buffer);

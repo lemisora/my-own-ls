@@ -1,6 +1,8 @@
 #ifndef MOSH_UTILS_H
 #define MOSH_UTILS_H
 
+#define BUF_LENGTH 1024
+
 #include <stdio.h>
 
 int my_touch(int argc, char** args);
