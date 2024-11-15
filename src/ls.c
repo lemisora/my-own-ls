@@ -3,7 +3,7 @@
     Se emplearán descriptores de archivos y directorios para realizar la correcta representación
     en pantalla de los archivos disponibles dada una dirección como argumento
 */
-#include "utilities.h"
+#include "../utilities.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <fcntl.h>
@@ -20,11 +20,16 @@ void print_permissions(struct stat filestat_temp);
 void bytes_converted(unsigned int bytes);
 
 int my_ls(int argc, char** args){
+    char* location;
+    if(argc < 2) {
+        location = ".\0"; // Variable en la que se almacenará la cadena de ubicació
+    } else {
+        location = args[1]; // Variable en la que se almacenará la cadena de ubicació
+    }
     int show_hidden = 0;
     DIR* dir_temp;  //Apuntador a directorio
     //struct stat file_temp;  //
 
-    char *location = args[1]; // Variable en la que se almacenará la cadena de ubicación
     printf("Dirección: %s\n", location);
 
     dir_temp = opendir(location);
