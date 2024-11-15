@@ -3,7 +3,7 @@
     Se emplearán descriptores de archivos y directorios para realizar la correcta representación
     en pantalla de los archivos disponibles dada una dirección como argumento
 */
-#include "../utilities.h"
+#include "utilities.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <fcntl.h>
