@@ -1,3 +1,4 @@
+#include "utilities.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -16,9 +17,12 @@ void printInitMsg(){
     printf("Bienvenido a My Own Shell (Development)!\n");
 }
 
-void showHelp(){// Función para mostrar ayuda adicional al usuario
-    printf("Ayuda\n");
+void printExitMsg(){
+    printf("Saliendo de mosh-dev\n");
+}
 
+void printArgs(int argc, char** argv){
+    printf("Argumentos ingresados: %i -> \"%s\"\n", argc, argv[0]);
 }
 
 int shellKeyword(char* command){
@@ -30,7 +34,15 @@ int shellKeyword(char* command){
     return -1;
 }
 
+void showHelp(){
+    printf("Los comandos disponibles en esta shell son los siguientes:\n");
+    printf("exit\n");
+    printf("help\n");
+    printf("touch\n\n");
+}
+
 int main(){
+    int argc;
     char buffer[BUF_LENGTH];
     //int cmd_mapper;
     printInitMsg();
@@ -38,13 +50,24 @@ int main(){
         printPrompt();
         if(fgets(buffer, BUF_LENGTH, stdin)!= NULL){
             buffer[strcspn(buffer, "\n")] = '\0';
-            int cmd_mapper = shellKeyword(buffer);
+
+            char *args[BUF_LENGTH/2+1];
+            char *token = strtok(buffer, " ");
+            argc = 0;
+            while(token != NULL && argc < BUF_LENGTH){
+                args[argc++] = token;
+                token = strtok(NULL, " ");
+            }
+            args[argc] = NULL;
+
+            int cmd_mapper = shellKeyword(args[0]);
+            //printArgs(argc, args);
             switch(cmd_mapper){
-                case 0: printf("Saliendo de mosh-dev\n"); exit(EXIT_SUCCESS); break;
+                case 0: printExitMsg(); exit(EXIT_SUCCESS); break;
                 case 1: showHelp(); break;
+                case 8: my_ls(argc, args); break;
                 default: printf("Error: Comando '%s' no reconocido\n", buffer); break;
             }
         }
     }
-    return EXIT_SUCCESS;
 }
