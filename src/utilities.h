@@ -3,13 +3,13 @@
 
 #include <stdio.h>
 
-int my_touch(char** args);
-int my_echo(char** args);
-int my_rm(char** args);
-int my_cat(char** args);
-int my_mv(char** args);
-int my_mkdir(char** args);
+int my_touch(int argc, char** args);
+int my_echo(int argc, char** args);
+int my_rm(int argc, char** args);
+int my_cat(int argc, char** args);
+int my_mv(int argc, char** args);
+int my_mkdir(int argc, char** args);
 int my_ls(int argc, char** args);
-int my_rmdir(char** args);
+int my_rmdir(int argc, char** args);
 
 #endif
