@@ -8,5 +8,6 @@ executable(
   'src/ls.c',
   'src/mkdir.c',
   'src/rmdir.c',
+  'src/touch.c',
   install: true, # Instalar ejecutable en una carpeta determinada
 )

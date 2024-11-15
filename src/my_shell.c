@@ -80,9 +80,9 @@ int main() {
       case 1:
         showHelp();
         break;
-      // case 2:
-      //   my_touch(argc, args);
-      //   break;
+      case 2:
+        my_touch(argc, args);
+        break;
       // case 3:
       //   my_echo(argc, args);
       //   break;
