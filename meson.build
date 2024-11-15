@@ -6,5 +6,7 @@ executable(
   'mosh',
   'src/my_shell.c',
   'src/ls.c',
+  'src/mkdir.c',
+  'src/rmdir.c',
   install: true, # Instalar ejecutable en una carpeta determinada
 )
