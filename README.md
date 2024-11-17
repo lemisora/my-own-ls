@@ -161,6 +161,5 @@ En caso de que se sobrepase el valor en terabytes de `1024TB` se imprimira `Exce
 
 
 # Tareas pendientes
-- Completar comando 'write' para escribir cadenas a un archivo nuevo o uno con contenido existente
 - Poner una opción en 'cat' para leer un archivo desde una posición específica e imprimir
 - Poner una opción en 'mv' para renombrar directorios
