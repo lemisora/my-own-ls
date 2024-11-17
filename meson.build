@@ -11,6 +11,7 @@ executable(
   'src/touch.c',
   'src/rm.c',
   'src/cat.c',
+  'src/cat_append.c',
   'src/mv.c',
   install: true, # Instalar ejecutable en una carpeta determinada
 )
