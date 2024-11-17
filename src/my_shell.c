@@ -1,11 +1,11 @@
 #include "utilities.h"
+#include <locale.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <locale.h>
 
 #define KW_NUM 11
 
@@ -15,16 +15,16 @@ char hostname[BUF_LENGTH];
 char *keywords[KW_NUM] = {"exit", "help",  "touch", "write", "rm",   "cat",
                           "mv",   "mkdir", "ls",    "rmdir", "clear"};
 
-void printPrompt(const char *usr, char *hostname){
-    char dir_actual[PATH_MAX_LENGTH];
-    if(getcwd(dir_actual, sizeof(dir_actual)) != NULL){
-        printf("\033[1m\033[34m[%s@\033[32m%s\033[0m\033[1m:%s]$ \033[0m", user,
-               hostname, dir_actual);
-    } else {
-        printf("\033[1m\033[34m[%s@\033[32m%s\033[0m\033[1m]$ \033[0m", user,
-               hostname);
-    }
+void printPrompt(const char *usr, char *hostname) {
+  char dir_actual[PATH_MAX_LENGTH];
+  if (getcwd(dir_actual, sizeof(dir_actual)) != NULL) {
+    printf("\033[1m\033[34m[%s@\033[32m%s\033[0m\033[1m:%s]$ \033[0m", user,
+           hostname, dir_actual);
+  } else {
+    printf("\033[1m\033[34m[%s@\033[32m%s\033[0m\033[1m]$ \033[0m", user,
+           hostname);
   }
+}
 
 void printInitMsg() {
   printf("Bienvenido a My Own Shell (Development)!\nPara más información "
@@ -68,9 +68,9 @@ void showHelp() {
 }
 
 int main() {
-    if(setlocale(LC_ALL, "") == NULL){
-        perror("Error al configurar localización de idioma");
-    }
+  if (setlocale(LC_ALL, "") == NULL) {
+    perror("Error al configurar localización de idioma");
+  }
   uid_t uid = getuid();
   struct passwd *pw = getpwuid(uid);
   if (pw == NULL) {
@@ -136,7 +136,8 @@ int main() {
         clear_screen();
         break;
       default:
-        printf("\033[1m\033[31mError:\033[0m Comando '%s' no reconocido\n", buffer);
+        printf("\033[1m\033[31mError:\033[0m Comando '%s' no reconocido\n",
+               buffer);
         break;
       }
     }

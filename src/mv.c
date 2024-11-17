@@ -1,15 +1,15 @@
 #include "utilities.h"
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
-#include <unistd.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 // int my_mv(int argc, char **args){
 //     if(argc < 3){
-//         printf("Error: se debe ingresar el nombre/ruta del archivo o directorio original y del nombre/ruta destino\n");
-//         printf("Uso: mv [ruta_original] [ruta_destino]\n");
-//         return EXIT_FAILURE;
+//         printf("Error: se debe ingresar el nombre/ruta del archivo o
+//         directorio original y del nombre/ruta destino\n"); printf("Uso: mv
+//         [ruta_original] [ruta_destino]\n"); return EXIT_FAILURE;
 //     }
 //     const char* origin = args[1];
 //     const char* destination = args[2];
@@ -54,21 +54,22 @@
 //     return EXIT_SUCCESS;
 // }
 
-int my_mv(int argc, char **args){
-    if(argc != 3){
-        printf("Error: debe incluir la ruta de origen y la ruta destino\n");
-        return EXIT_FAILURE;
-    }
+int my_mv(int argc, char **args) {
+  if (argc != 3) {
+    printf("Error: debe incluir la ruta de origen y la ruta destino\n");
+    return EXIT_FAILURE;
+  }
 
-    const char* origin_path = args[1];
-    const char* dest_path = args[2];
+  const char *origin_path = args[1];
+  const char *dest_path = args[2];
 
-    if(rename(origin_path, dest_path) == 0){
-        printf("'%s' se ha renombrado a '%s' de forma exitosa\n", origin_path, dest_path);
-    } else {
-        perror("Ocurrió un error al renombrar");
-        return EXIT_FAILURE;
-    }
+  if (rename(origin_path, dest_path) == 0) {
+    printf("'%s' se ha renombrado a '%s' de forma exitosa\n", origin_path,
+           dest_path);
+  } else {
+    perror("Ocurrió un error al renombrar");
+    return EXIT_FAILURE;
+  }
 
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
