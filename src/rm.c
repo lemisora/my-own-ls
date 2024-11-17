@@ -81,7 +81,7 @@ int my_rm(int argc, char **args){
     }
 
     if((recursive ? my_rm_r(file_path) : unlink(file_path)) != 0){
-        fprintf(stderr, "Error al eliminar '%s'\n", file_path);
+        perror("Error al eliminar");
         return EXIT_FAILURE;
     }
     printf("Se ha borrado el archivo '%s' de forma exitosa\n", file_path);

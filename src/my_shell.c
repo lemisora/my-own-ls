@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <locale.h>
 
 #define KW_NUM 11
 
@@ -67,6 +68,9 @@ void showHelp() {
 }
 
 int main() {
+    if(setlocale(LC_ALL, "") == NULL){
+        perror("Error al configurar localización de idioma");
+    }
   uid_t uid = getuid();
   struct passwd *pw = getpwuid(uid);
   if (pw == NULL) {
