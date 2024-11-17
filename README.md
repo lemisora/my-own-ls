@@ -140,17 +140,6 @@ const char *units[] = {"B ", "KB", "MB", "GB", "TB"};
 ```
 En caso de que se sobrepase el valor en terabytes de `1024TB` se imprimira `Exceeds` como forma de proteccion al acceso de lista
 
-## A realizar
-- Un programa con utilidades similares a touch
-- Escribir a archivo
-- Borrar archivo
-- Mostrar archivo
-- Abre un archivo apuntando a un punto específico e imprimir desde ahí
-- Crear directorio / mostrar directorio
-- Crear un pequeño shell que solo interprete los comandos que vamos a crear
-
-- nodo-r - nodo remoto
-
 ### Utilidades del nuevo proyecto
 - Mini prompt (debe permitir)
   - Crear archivo (similar a ```touch```)
@@ -171,4 +160,7 @@ En caso de que se sobrepase el valor en terabytes de `1024TB` se imprimira `Exce
   - salir
 
 
-  # Buscar definición y ejemplos de hipervisores
+# Tareas pendientes
+- Completar comando 'write' para escribir cadenas a un archivo nuevo o uno con contenido existente
+- Poner una opción en 'cat' para leer un archivo desde una posición específica e imprimir
+- Poner una opción en 'mv' para renombrar directorios
