@@ -17,10 +17,10 @@ char *keywords[KW_NUM] = {"exit", "help",  "touch", "write", "rm",   "cat",
 void printPrompt(const char *usr, char *hostname){
     char dir_actual[PATH_MAX_LENGTH];
     if(getcwd(dir_actual, sizeof(dir_actual)) != NULL){
-        printf("\033[1m\033[34m[%s@\033[32m%s\033[0m \033[1m: %s]$ \033[0m", user,
+        printf("\033[1m\033[34m[%s@\033[32m%s\033[0m\033[1m:%s]$ \033[0m", user,
                hostname, dir_actual);
     } else {
-        printf("\033[1m\033[34m[%s@\033[32m%s\033[0m \033[1m]$ \033[0m", user,
+        printf("\033[1m\033[34m[%s@\033[32m%s\033[0m\033[1m]$ \033[0m", user,
                hostname);
     }
   }
