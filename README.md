@@ -162,4 +162,4 @@ En caso de que se sobrepase el valor en terabytes de `1024TB` se imprimira `Exce
 
 # Tareas pendientes
 - Poner una opción en 'cat' para leer un archivo desde una posición específica e imprimir
-- Poner una opción en 'mv' para renombrar directorios
+- Poner una opción en 'mv' para renombrar directorios -- Se reimplementó mv en alto nivel

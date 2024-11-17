@@ -6,7 +6,7 @@
 #include <fcntl.h>
 
 int my_cat_append(int argc, char **args){
-    if(argc < 2){
+    if(argc != 3){
         printf("Error: debe acompañar de ruta del archivo y el símbolo de FIN\n");
         printf("Uso: write [nombre_archivo] [fin]\nEjemplo: write archivo.txt EOF\n");
         return EXIT_FAILURE;
