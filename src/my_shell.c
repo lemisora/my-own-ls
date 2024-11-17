@@ -1,6 +1,8 @@
 #include "utilities.h"
 #include <locale.h>
 #include <pwd.h>
+#include <stdbool.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,18 +38,14 @@ void printExitMsg() { printf("Saliendo de mosh-dev\n"); }
 void clear_screen() { printf("\033[2J\033[H"); }
 
 int shellKeyword(char *command) {
-  for (int i = 0; i < KW_NUM; i++) {
-    if (strcmp(keywords[i], command) == 0) {
+  for (int i = 0; i < KW_NUM; i++)
+    if (strcmp(keywords[i], command) == 0)
       return i;
-    }
-  }
   return -1;
 }
 
 void showHelp() {
   printf("Los comandos disponibles en esta shell son los siguientes:\n");
-  printf("exit - Para salir de esta shell\n");
-  printf("help - Imprimir esta ayuda\n");
   printf("touch - Crear un archivo vacío\n\tUso: touch [nombre_archivo]\n");
   printf("write - Escribir a un archivo\n\tUso: write [nombre_archivo] "
          "PARAMETRO_FIN\n");
@@ -55,33 +53,52 @@ void showHelp() {
       "rm - Eliminar un archivo\n\tUso: rm [nombre_archivo]\nrm -r - Eliminar "
       "directorio con todos sus archivos\n\tUso: rm -r [nombre_directorio]\n");
   printf("cat - Leer el contenido de un archivo e imprimirlo en salida "
-         "estándar (en la terminal)\n\tUso: cat [nombre_archivo]\n");
-  printf("mv - Mover un archivo de un lugar a otro o para cambiarlo de "
-         "nombre\n\tUso: mv [directorio_origen] [directorio_destino]\n");
-  printf("mkdir - Crear un directorio vacío\n\tUso: mkdir "
-         "[nombre_nuevo_directorio]\n");
+         "estándar (en la terminal)\n\tUso: cat [nombre_archivo]\n"
+         "cat [nombre_archivo] POSICION - Para leer un archivo e imprimirlo "
+         "desde una posición especificada\n"
+         "\tEjemplo: cat archivo.txt 2\n");
   printf("ls - Listar los archivos y directorios del directorio en el que se "
          "encuentre o de la dirección proporcionada\n");
+  printf("mv - Mover un archivo o un directorio de un lugar a otro o para "
+         "cambiarlo de "
+         "nombre\n\tUso: mv [ruta_origen] [ruta_destino]\n");
+  printf("mkdir - Crear un directorio vacío\n\tUso: mkdir "
+         "[nombre_nuevo_directorio]\n");
   printf("rmdir - Eliminar un directorio vacío\n\tUso: rmdir "
          "[nombre_directorio]\n");
+  printf("help - Imprimir esta ayuda\n");
   printf("clear - Limpiar el contenido de la pantalla\n");
+  printf("exit - Para salir de esta shell\n");
 }
 
 int main() {
-  if (setlocale(LC_ALL, "") == NULL) {
+  int argc;
+  bool mosh_hst_loaded = false;
+  if (setlocale(LC_ALL, "") == NULL)
     perror("Error al configurar localización de idioma");
+
+  FILE *moshHistoryFile = fopen(".mosh_history", "a+");
+  if (moshHistoryFile == NULL) {
+    printf("No se pudo abrir .mosh_history, así que no se puede acceder a los "
+           "comandos pasados\n");
+  } else {
+    mosh_hst_loaded = true;
   }
+
   uid_t uid = getuid();
   struct passwd *pw = getpwuid(uid);
+
   if (pw == NULL) {
     perror("Error al iniciar shell, no se encuentra usuario");
     return EXIT_FAILURE;
   }
+
   user = pw->pw_name;
   if (gethostname(hostname, sizeof(hostname)) == -1) {
     perror("Error al iniciar shell, no se encuentra hostname");
+    return EXIT_FAILURE;
   }
-  int argc;
+
   char buffer[BUF_LENGTH];
   printInitMsg();
 
@@ -89,7 +106,13 @@ int main() {
     printPrompt(user, hostname);
     if (fgets(buffer, BUF_LENGTH, stdin) != NULL) {
       buffer[strcspn(buffer, "\n")] = '\0';
-
+      if (mosh_hst_loaded) {
+        fprintf(moshHistoryFile, "%s\n", buffer);
+        printf("Comando escrito en .moshHistory: %s\n", buffer);
+        if (fscanf(moshHistoryFile, "%s\n", buffer) == 1) {
+          printf("Comando leído desde .moshHistory : %s\n", buffer);
+        }
+      }
       char *args[BUF_LENGTH / 2 + 1];
       char *token = strtok(buffer, " ");
       argc = 0;
@@ -103,6 +126,10 @@ int main() {
       switch (cmd_mapper) {
       case 0:
         printExitMsg();
+        if (mosh_hst_loaded) {
+          fclose(moshHistoryFile);
+          mosh_hst_loaded = false;
+        }
         exit(EXIT_SUCCESS);
         break;
       case 1:
