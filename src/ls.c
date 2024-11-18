@@ -8,6 +8,7 @@
 #include <dirent.h> //Header para acceder a las entradas de directorio del sistema
 #include <fcntl.h>
 #include <pwd.h> //Header para obtener información del propietario del archivo
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> //Header para funciones de manipulación de cadenas
@@ -15,24 +16,40 @@
 #include <time.h> // Header para funciones de tiempo
 #define PATH_MAX 4096
 
-int print_dir(DIR *dir_temp, int show_hidden, const char *location);
+char buffer[BUF_LENGTH];
+
+int print_dir(DIR *dir_temp, int show_all, int detailed, const char *location);
 void printBinary(unsigned int num, int bits_to_print);
 void print_permissions(struct stat filestat_temp);
 void bytes_converted(unsigned int bytes);
 
 int my_ls(int argc, char **args) {
   char *location;
+  int detailed = false;
+  int show_all = false;
+  /*
+    - Se imprime la lista del directorio actual en caso de no dar una ruta
+    - Se imprime la lista de archivos de la ruta dada
+    - Se imprime una lista detallada si se usa el parámetro -l
+  */
+
   if (argc < 2) {
-    location = ".\0"; // Variable en la que se almacenará la cadena de ubicació
-  } else {
-    location =
-        args[1]; // Variable en la que se almacenará la cadena de ubicació
+    location = ".\0"; // Variable en la que se almacenará la cadena de la ruta
+  } else if (argc == 2) {
+    location = args[1];
+  } else if (argc == 3) {
+    detailed = true;
+    location = args[1]; // Variable en la que se almacenará la cadena de la ruta
+    if (strcmp("-l", args[2]) != 0) {
+      printf("Error: opción '%s' no válida para ls\n", args[2]);
+      return EXIT_FAILURE;
+    }
   }
-  int show_hidden = 0;
+
   DIR *dir_temp; // Apuntador a directorio
   // struct stat file_temp;  //
 
-  printf("Dirección: %s\n", location);
+  // printf("Dirección: %s\n", location);
 
   dir_temp = opendir(location);
   if (dir_temp == NULL) {
@@ -40,61 +57,29 @@ int my_ls(int argc, char **args) {
     return EXIT_FAILURE;
   }
 
-  print_dir(dir_temp, show_hidden, location);
+  print_dir(dir_temp, show_all, detailed, location);
   return EXIT_SUCCESS;
 }
 
-/*int main(int argc, char **argv){
-    if (argc < 2){
-        printf("Debe ingresar una dirección como argumento\n");
-        return EXIT_FAILURE;
-    }
-
-    int show_hidden = 0;    //Variable para mostrar archivos ocultos
-    if (argc > 2){
-        if (strcmp(argv[2], "-h") == 0)
-        {
-            printf("= Mostrando archivos ocultos\n");
-            show_hidden = 1;
-        }
-    }
-
-
-    DIR* dir_temp;  //Apuntador a directorio
-    //struct stat file_temp;  //
-
-    char *location = argv[1]; // Variable en la que se almacenará la cadena de
-   ubicación printf("Dirección: %s\n", location);
-
-    dir_temp = opendir(location);
-    if(dir_temp == NULL){
-        perror("Error al abrir directorio");
-        return EXIT_FAILURE;
-    }
-
-    print_dir(dir_temp, show_hidden, location);
-
-
-    return EXIT_SUCCESS;
-    }*/
-
-int print_dir(DIR *dir_temp, int show_hidden, const char *location) {
+int print_dir(DIR *dir_temp, int show_all, int detailed, const char *location) {
 
   struct dirent *dir_ent_temp; // struct para almacenar temporalmente la entrada
                                // del directorio
-  struct stat filestat_temp; // struct para almacenar temporalmente la
-                             // información del archivo
-  char filepath[PATH_MAX]; // Para almacenar la ruta completa del archivo
+  struct stat filestat_temp;   // struct para almacenar temporalmente la
+                               // información del archivo
+  char filepath[PATH_MAX];     // Para almacenar la ruta completa del archivo
 
-  printf("PERMISOS   N    DUENO     GRUPO     TAMANO  FECHADEMODIFICACION "
-         "INODO       OFFSET              NOMBRE\n");
-  printf("==========|====|=========|=========|=======|===================|====="
-         "======|===================|================================\n");
+  if(detailed){
+      printf("PERMISOS   N    DUENO     GRUPO     TAMANO  FECHADEMODIFICACION "
+             "INODO       OFFSET              NOMBRE\n");
+      printf("==========|====|=========|=========|=======|===================|====="
+             "======|===================|================================\n");
+  }
 
   while ((dir_ent_temp = readdir(dir_temp)) !=
          NULL) { // Se obtiene la entrada actual
 
-    if (show_hidden == 0 && dir_ent_temp->d_name[0] == '.') {
+    if (show_all == 0 && dir_ent_temp->d_name[0] == '.') {
       continue;
     }
 
@@ -107,45 +92,59 @@ int print_dir(DIR *dir_temp, int show_hidden, const char *location) {
     }
 
     // |PERMISOS|
-    print_permissions(filestat_temp);
-    // |CARPETAS ENLACES|
-    printf(" %ld\t", filestat_temp.st_nlink); // Número de enlaces
+    if (detailed) {
+      print_permissions(filestat_temp);
+      // |CARPETAS ENLACES|
+      printf(" %ld\t", filestat_temp.st_nlink); // Número de enlaces
 
-    // |PROPIETARIO|
-    struct passwd *pw = getpwuid(filestat_temp.st_uid);
-    if (pw) {
-      printf("%-9.9s",
-             pw->pw_name); // Propietario con longitud ajustada a 8 caracteres
-    } else {
-      printf("unknown  ");
-    }
+      // |PROPIETARIO|
+      struct passwd *pw = getpwuid(filestat_temp.st_uid);
+      if (pw) {
+        printf("%-9.9s",
+               pw->pw_name); // Propietario con longitud ajustada a 8 caracteres
+      } else {
+        printf("unknown  ");
+      }
 
-    // |GRUPO|
-    struct passwd *gr = getpwuid(filestat_temp.st_gid); // Grupo
-    if (gr) {
-      printf(" %-9.9s",
-             gr->pw_name); // Grupo con longitud ajustada a 8 caracteres
-    } else {
-      printf(" unknown  ");
-    }
+      // |GRUPO|
+      struct passwd *gr = getpwuid(filestat_temp.st_gid); // Grupo
+      if (gr) {
+        printf(" %-9.9s",
+               gr->pw_name); // Grupo con longitud ajustada a 8 caracteres
+      } else {
+        printf(" unknown  ");
+      }
 
-    // |TAMAÑO|
-    bytes_converted(filestat_temp.st_size); // Tamaño del archivo
+      // |TAMAÑO|
+      bytes_converted(filestat_temp.st_size); // Tamaño del archivo
 
-    // |FECHA|
-    printf(" %-19.19s", ctime(&filestat_temp.st_mtime));
+      // |FECHA|
+      printf(" %-19.19s", ctime(&filestat_temp.st_mtime));
 
-    // inodes
-    printf(" %-11.11lu", dir_ent_temp->d_ino);
-    printf(" %-11.11lu", dir_ent_temp->d_off);
-
+      // inodes
+      printf(" %-11.11lu", dir_ent_temp->d_ino);
+      printf(" %-11.11lu", dir_ent_temp->d_off);
     // |NOMBRE|
-    printf(" %-32.32s\n",
-           dir_ent_temp->d_name); // Impresión del nombre del archivo
+        strcpy(buffer, dir_ent_temp -> d_name);
+        if(S_ISDIR(filestat_temp.st_mode)){
+            strcat(buffer, "/");
+            printf("\033[1m\033[34m %-32.32s\n\033[0m", buffer);
+        } else {
+            printf(" %-32.32s\n",buffer);
+        }
+    } else {
+        strcpy(buffer, dir_ent_temp -> d_name);
+        if(S_ISDIR(filestat_temp.st_mode)){
+            strcat(buffer, "/");
+            printf("\033[1m\033[34m%s \033[0m", buffer);
+        }else{
+            printf("%s ",buffer);
+        }
+    }
   }
 
   closedir(dir_temp); // Cerrar el apuntador a directorio
-
+  printf("\n");
   return 0;
 }
 
