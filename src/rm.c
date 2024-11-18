@@ -86,6 +86,9 @@ int my_rm(int argc, char **args) {
     perror("Error al eliminar");
     return EXIT_FAILURE;
   }
-  printf("Se ha borrado el archivo '%s' de forma exitosa\n", file_path);
+  if(recursive)
+      printf("Se ha borrado el directorio '%s' con su contenido de forma exitosa\n", file_path);
+  else
+      printf("Se ha borrado el archivo '%s' de forma exitosa\n", file_path);
   return EXIT_SUCCESS;
 }
