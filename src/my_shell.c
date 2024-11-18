@@ -2,7 +2,6 @@
 #include <locale.h>
 #include <pwd.h>
 #include <stdbool.h>
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,10 +19,10 @@ char *keywords[KW_NUM] = {"exit", "help",  "touch", "write", "rm",   "cat",
 void printPrompt(const char *usr, char *hostname) {
   char dir_actual[PATH_MAX_LENGTH];
   if (getcwd(dir_actual, sizeof(dir_actual)) != NULL) {
-    printf("\033[1m\033[34m[%s@\033[32m%s\033[0m\033[1m:%s]$ \033[0m", user,
+    printf("\033[1m\033[32m[%s@%s\033[0m\033[1m:%s]$ \033[0m", user,
            hostname, dir_actual);
   } else {
-    printf("\033[1m\033[34m[%s@\033[32m%s\033[0m\033[1m]$ \033[0m", user,
+    printf("\033[1m\033[32m[%s@%s\033[0m\033[1m]$ \033[0m", user,
            hostname);
   }
 }
@@ -97,6 +96,11 @@ int main() {
     printPrompt(user, hostname);
     if (fgets(buffer, BUF_LENGTH, stdin) != NULL) {
       buffer[strcspn(buffer, "\n")] = '\0';
+
+      if(strlen(buffer) == 0){
+        continue;
+      }
+
       char *args[BUF_LENGTH / 2 + 1];
       char *token = strtok(buffer, " ");
       argc = 0;
