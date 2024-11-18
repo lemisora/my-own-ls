@@ -73,17 +73,8 @@ void showHelp() {
 
 int main() {
   int argc;
-  bool mosh_hst_loaded = false;
   if (setlocale(LC_ALL, "") == NULL)
     perror("Error al configurar localización de idioma");
-
-  FILE *moshHistoryFile = fopen(".mosh_history", "a+");
-  if (moshHistoryFile == NULL) {
-    printf("No se pudo abrir .mosh_history, así que no se puede acceder a los "
-           "comandos pasados\n");
-  } else {
-    mosh_hst_loaded = true;
-  }
 
   uid_t uid = getuid();
   struct passwd *pw = getpwuid(uid);
@@ -106,13 +97,6 @@ int main() {
     printPrompt(user, hostname);
     if (fgets(buffer, BUF_LENGTH, stdin) != NULL) {
       buffer[strcspn(buffer, "\n")] = '\0';
-      if (mosh_hst_loaded) {
-        fprintf(moshHistoryFile, "%s\n", buffer);
-        // printf("Comando escrito en .moshHistory: %s\n", buffer);
-        // if (fscanf(moshHistoryFile, "%s\n", buffer) == 1) {
-        //   printf("Comando leído desde .moshHistory : %s\n", buffer);
-        // }
-      }
       char *args[BUF_LENGTH / 2 + 1];
       char *token = strtok(buffer, " ");
       argc = 0;
@@ -126,10 +110,6 @@ int main() {
       switch (cmd_mapper) {
       case 0:
         printExitMsg();
-        if (mosh_hst_loaded) {
-          fclose(moshHistoryFile);
-          mosh_hst_loaded = false;
-        }
         exit(EXIT_SUCCESS);
         break;
       case 1:
