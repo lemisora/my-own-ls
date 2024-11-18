@@ -1,5 +1,5 @@
 #Archivo de configuración de Meson para el proyecto
-project('my-own-shell', 'c', version: '1.0')
+project('my-own-shell', 'c', version: '1.1')
 executable(
   'mosh', # Nombre del ejecutable
   'src/my_shell.c', # Código fuente principal
