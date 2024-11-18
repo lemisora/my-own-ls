@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <utime.h>
 
+// Implementación de touch para crear archivos con mosh
 int my_touch(int argc, char **args) {
   if (argc < 2) {
     printf("Error: debe de ingresar el nombre del fichero/archivo a "

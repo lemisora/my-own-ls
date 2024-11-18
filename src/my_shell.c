@@ -108,10 +108,10 @@ int main() {
       buffer[strcspn(buffer, "\n")] = '\0';
       if (mosh_hst_loaded) {
         fprintf(moshHistoryFile, "%s\n", buffer);
-        printf("Comando escrito en .moshHistory: %s\n", buffer);
-        if (fscanf(moshHistoryFile, "%s\n", buffer) == 1) {
-          printf("Comando leído desde .moshHistory : %s\n", buffer);
-        }
+        // printf("Comando escrito en .moshHistory: %s\n", buffer);
+        // if (fscanf(moshHistoryFile, "%s\n", buffer) == 1) {
+        //   printf("Comando leído desde .moshHistory : %s\n", buffer);
+        // }
       }
       char *args[BUF_LENGTH / 2 + 1];
       char *token = strtok(buffer, " ");
@@ -148,7 +148,7 @@ int main() {
         my_cat(argc, args);
         break;
       case 6:
-        my_mv(argc, args); // Falta implementar la versión que renombra carpetas
+        my_mv(argc, args);
         break;
       case 7:
         my_mkdir(argc, args);
