@@ -36,13 +36,19 @@ int my_ls(int argc, char **args) {
   if (argc < 2) {
     location = ".\0"; // Variable en la que se almacenará la cadena de la ruta
   } else if (argc == 2) {
-    location = args[1];
+      if(strcmp("-l", args[1]) == 0){
+          location = ".\0";
+          detailed = true;
+      } else {
+        location = args[1];
+      }
   } else if (argc == 3) {
-    detailed = true;
     location = args[1]; // Variable en la que se almacenará la cadena de la ruta
     if (strcmp("-l", args[2]) != 0) {
       printf("Error: opción '%s' no válida para ls\n", args[2]);
       return EXIT_FAILURE;
+    } else {
+        detailed = true;
     }
   }
 
