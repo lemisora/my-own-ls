@@ -8,9 +8,14 @@ int my_rmdir(int argc, char **args) {
     printf("Error: debe ingresar el nombre del directorio a eliminar\nUso: "
            "rmdir [nombre_directorio]\n");
     return EXIT_FAILURE;
+  } else if(argc > 2){
+      printf("Error: exceso de argumentos\n");
+      return EXIT_FAILURE;
   }
-  const char *dir_name = args[1];
 
+  const char *dir_name = args[1]; //Obtener el nombre del directorio
+
+  //Eliminar directorio con rmdir() de unistd.h
   if (rmdir(dir_name) == 0) {
     printf("Se ha eliminado '%s' de forma exitosa\n", dir_name);
   } else {

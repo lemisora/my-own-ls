@@ -16,22 +16,24 @@
 #include <time.h> // Header para funciones de tiempo
 #define PATH_MAX 4096
 
-char buffer[BUF_LENGTH];
+char buffer[BUF_LENGTH];    //Buffer de caracteres
 
+//Función para imprimir los detalles de las entradas de directorio
 int print_dir(DIR *dir_temp, int show_all, int detailed, const char *location);
-void printBinary(unsigned int num, int bits_to_print);
+//Función para imprimir permisos de archivos y directorios
 void print_permissions(struct stat filestat_temp);
+//Función para imprimri el tamaño de archivo en bytes
 void bytes_converted(unsigned int bytes);
 
+/*
+  - Se imprime la lista del directorio actual en caso de no dar una ruta
+  - Se imprime la lista de archivos de la ruta dada
+  - Se imprime una lista detallada si se usa el parámetro -l
+*/
 int my_ls(int argc, char **args) {
   char *location;
-  int detailed = false;
-  int show_all = false;
-  /*
-    - Se imprime la lista del directorio actual en caso de no dar una ruta
-    - Se imprime la lista de archivos de la ruta dada
-    - Se imprime una lista detallada si se usa el parámetro -l
-  */
+  int detailed = false; //Booleano para imprimir versión detallada
+  int show_all = false; //Booleano para imprimir todos los archivos
 
   if (argc < 2) {
     location = ".\0"; // Variable en la que se almacenará la cadena de la ruta
@@ -48,8 +50,11 @@ int my_ls(int argc, char **args) {
       printf("Error: opción '%s' no válida para ls\n", args[2]);
       return EXIT_FAILURE;
     } else {
-        detailed = true;
+        detailed = true;    //Imprimir la versión detallada
     }
+  } else if(argc > 3){
+    printf("Error: exceso de argumentos\n");
+    return EXIT_FAILURE;
   }
 
   DIR *dir_temp; // Apuntador a directorio
@@ -152,14 +157,6 @@ int print_dir(DIR *dir_temp, int show_all, int detailed, const char *location) {
   closedir(dir_temp); // Cerrar el apuntador a directorio
   printf("\n");
   return 0;
-}
-
-void printBinary(unsigned int num, int bits_to_print) {
-  for (int i = bits_to_print - 1; i >= 0; i--) {
-    if (i % 4 == 3 && i != bits_to_print - 1)
-      printf(" ");
-    printf("%d", (num >> i) & 1);
-  }
 }
 
 void print_permissions(struct stat filestat_temp) {
