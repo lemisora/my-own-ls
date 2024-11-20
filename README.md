@@ -44,7 +44,7 @@ Aqui puedes ejecutar los siguientes comandos
 - `mv`
   - Mueve o renombra archivos o directorios
 - `clear`
-  -Limpia la terminal
+  - Limpia la terminal
 
 
 # Referencias
