@@ -14,7 +14,7 @@ int my_rm(int argc, char **args) {
     printf("Error: debe ingresar el nombre o ruta del archivo a borrar\nUso: "
            "rm [ruta_archivo]\n");
     return EXIT_FAILURE;
-  } else if(argc > 2){
+  } else if(argc > 3){
     printf("Error: exceso de argumentos\n");
     return EXIT_FAILURE;
   }

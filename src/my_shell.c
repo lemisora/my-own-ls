@@ -1,4 +1,4 @@
-#include "utilities.h"  //Header en el que se contiene el prorotipado de las mosh-utils para usarlas
+#include "utilities.h"  //Header en el que se contiene el prototipado de las mosh-utils para usarlas
 #include <locale.h> //Header para poder mostrar los mensajes de perror() en el idioma del sistema
 #include <pwd.h>    //Header para acceder a propiedades del usuario actual para el prompt
 #include <stdbool.h>    //Header que provee a C la capacidad de usar booleanos
