@@ -1,16 +1,37 @@
-# Mi Propio Shell
-El objetivo de este programa es recrear una consola de comandos que permita la creacion, modificacion, eliminacion y re-ubicacion de archivos y directorios
-## Instalacion
-Este programa se compila bajo `C` y `Meson`, por lo que sera necesario descargarlos
-**Recomendamos no utilizar la version de meson dada por apt, ya que esta no se encontrara actualizada**
+# Mi Propio Shell (anteriormente llamado my-own-ls)
+- Este programa ofrece una shell minimalista que brinda acceso a utilidades básicas de un sistema operativo, se inspira en
+varias de las utilidades de los sistemas de la familia Unix:
+- Se incluyen las básicas y sencillas, aunque solo una varía y es propia
+  - touch - Para crear nuevoos archivos
+  - ls - Nuestra propia versión del mismo implementada con funciones de bajo nivel en C
+  - rm - Para eliminar archivos, y también directorios con contenido (eso usando la versión recursiva)
+  - cat - Para visualizar el contenido de un archivo
+  - mv - Para poder mover entradas de directorio o renombrarlos
+  - mkdir y rmdir - Para crear o eliminar directorios vacíos
+  - clear - Para limpiar la salida estándar
+  - *Función propia* `write` - Para escribir texto desde la terminal a un archivo de texto, se escribe todo hasta llegar a una palabra clave que el usuario indique
+  - help - Para mostrar más información acerca de cada uno de los comandos disponibles desde la terminal
 
-***Version de Meson Recomendada:*** `1.5.0`
+- Todas y cada una de las funciones se implementan con funciones de bajo y mediano nivel brindadas por varias bibliotecas del C estándar
+- Las únicas funciones que usan llamadas de medio nivel son las que involucran crear y eliminar directorios, debido a que hacerlo a bajo nivel involucraría riesgos de pérdida de datos
+
+## Instalacion
+Este programa se compila bajo `C` y `Meson`, por lo que será necesario descargarlos
+- **Recomendamos no utilizar la version de meson dada por apt, ya que es posible que esta no se encuentre actualizada**
+
+- ***Version de Meson Recomendada:*** `1.5.0`
 
 ```bash
 sudo apt-get install build-essential
 sudo apt-get install python3-pip
 pip install Ninja Meson
 ```
+
+### Otras dependencias necesarias
+- En la familia de distros Debian podrías necesitar los paquetes proporcionados en el paquete `build-essentials`
+- En la familia de RHEL/Fedora lo más probable es que necesites instalar `glibc-headers`
+- Como compilador puedes usar GCC o Clang, dependiendo de como configures a Meson, aunque por defecto elegirá el que encuentre primero, lo más probable es que elija a GCC
+
 ### Compilar programa
 ``` bash
 meson setup out
@@ -23,7 +44,7 @@ Simplemente es necesario abrir el ejecutable del programa `mosh`
 $ out/mosh # El directorio inicial sera en el cual este posicionado
 $ out/mosh [directorio a usar] # El directorio inicial sera el dado en args
 ```
-Dentro del programa, se vera un shell parecido a de UNIX
+Dentro del programa, se vera un shell parecido al de UNIX
 ```bash
 [user@hardware:/dir]$
 ```
